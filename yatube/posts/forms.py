@@ -1,7 +1,6 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
 
-from .models import Post, Comment
+from .models import Comment, Post
 
 
 class PostForm(forms.ModelForm):
@@ -9,8 +8,8 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['text', 'group', 'image']
         labels = {
-            'text': _('Текст'),
-            'group': _('Выберите группу'),
+            'text': 'Текст',
+            'group': 'Выберите группу',
         }
         help_texts = {
             'text': 'Текст поста',
@@ -23,8 +22,8 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['text']
         labels = {
-            'text': _('Текст коментария'),
+            'text': 'Текст коментария',
         }
         help_texts = {
-            'text': _('Коментарий'),
+            'text': 'Коментарий',
         }

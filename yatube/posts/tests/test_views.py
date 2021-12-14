@@ -1,11 +1,12 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
+
 from ..models import Group, Post
 from ..views import POST_STR
-from django.core.cache import cache
 
 User = get_user_model()
 POST_STR_TEST = 3
@@ -17,12 +18,12 @@ class PostPagesTests(TestCase):
         super().setUpClass()
         cls.user = User.objects.create_user(username='anonymous')
         small_gif = (
-             b'\x47\x49\x46\x38\x39\x61\x02\x00'
-             b'\x01\x00\x80\x00\x00\x00\x00\x00'
-             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-             b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-             b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-             b'\x0A\x00\x3B'
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
         )
         uploaded = SimpleUploadedFile(
             name='small.gif',
@@ -153,12 +154,12 @@ class PostPagesTests(TestCase):
         }
 
         small_gif = (
-             b'\x47\x49\x46\x38\x39\x61\x02\x00'
-             b'\x01\x00\x80\x00\x00\x00\x00\x00'
-             b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-             b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-             b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-             b'\x0A\x00\x3B'
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
         )
         uploaded = SimpleUploadedFile(
             name='small.gif',
@@ -245,30 +246,26 @@ class PaginatorViewsTest(TestCase):
                                  )
 
 
-class CacheTest(TestCase):
+class CacheViewsTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create_user(username='author')
+        cls.user = User.objects.create_user(username='anonymous3')
+        Post.objects.create(text='Тестовый текст кеш', author=cls.user)
 
     def setUp(self):
-        user = CacheTest.user
-        self.client = Client()
-        self.client.force_login(user)
-        self.post = Post.objects.create(author=CacheTest.user,
-                                        text='Test Post')
+        self.guest_user = Client()
 
-    def test_cache_view_nosave(self):
-        response = self.client.get(reverse('posts:index'))
-        self.assertIn(self.post, response.context['page_obj'])
-        Post.objects.filter(pk=1).delete()
-        cache.clear()
-        response = self.client.get(reverse('posts:index'))
-        self.assertNotIn(self.post, response.context['page_obj'])
+    def test_index_cache(self):
+        """Проверка кеширования главной страницы"""
+        response = self.client.get(reverse('index'))
+        text_cache = 'Текстовый текст кеш 2'
+        Post.objects.create(text=text_cache, author=self.user)
+        second_response = self.guest_user.get(reverse('index'))
 
-    def test_cache_view_save(self):
-        response = self.client.get(reverse('posts:index'))
-        self.assertIn(self.post, response.context['page_obj'])
-        Post.objects.filter(pk=1).delete()
-        self.assertIn(self.post, response.context['page_obj'])
-        
+        self.assertNotEqual(
+            len(response.context.get('page').object_list),
+            len(second_response.context.get('page').object_list),
+        )
+
+

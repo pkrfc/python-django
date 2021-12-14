@@ -73,7 +73,13 @@ class StaticURLTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_user_follow(self):
-        response = self.authorized_client.get(f'/{self.author.username}/follow/')
+        response = self.authorized_client.get(
+            f'/{self.author.username}/follow/'
+        )
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-
+    def test_user_unfollow(self):
+        response = self.authorized_client.get(
+            f'/{self.author.username}/unfollow/'
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)

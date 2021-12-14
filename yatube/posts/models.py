@@ -43,13 +43,14 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(
         Post,
+        on_delete=models.CASCADE,
         related_name='comments',
-        on_delete=models.CASCADE
+
     )
     author = models.ForeignKey(
         User,
+        on_delete=models.CASCADE,
         related_name='comments',
-        on_delete=models.CASCADE
     )
     text = models.TextField(
         'Текст комментария',
@@ -67,11 +68,12 @@ class Comment(models.Model):
 class Follow(models.Model):
     user = models.ForeignKey(
         User,
+        on_delete=models.CASCADE,
         related_name='follower',
-        on_delete=models.CASCADE
     )
     author = models.ForeignKey(
         User,
+        on_delete=models.CASCADE,
         related_name='following',
-        on_delete=models.CASCADE
+
     )
