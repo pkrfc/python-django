@@ -71,3 +71,9 @@ class StaticURLTests(TestCase):
         """Страница /posts/<int:post_id>/create/ доступна автору."""
         response = self.author_client.get('/posts/1/edit/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_user_follow(self):
+        response = self.authorized_client.get(f'/{self.author.username}/follow/')
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+

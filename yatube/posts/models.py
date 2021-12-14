@@ -64,9 +64,9 @@ class Comment(models.Model):
         return self.text[:15]
 
 
-class Comment(models.Model):
+class Follow(models.Model):
     user = models.ForeignKey(
-        Post,
+        User,
         related_name='follower',
         on_delete=models.CASCADE
     )
