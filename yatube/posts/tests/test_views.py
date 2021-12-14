@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.core.cache import cache
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group, Post
+from ..models import Group, Post, Follow
 from ..views import POST_STR
 
 User = get_user_model()
@@ -197,6 +197,19 @@ class PostPagesTests(TestCase):
         group = reverse('posts:group_posts', args=[group_post_not_in.slug])
         response = self.authorized_client.get(group)
         self.assertNotIn(self.post, response.context['page_obj'])
+
+    def test_follow(self):
+        """Тестирование подписки"""
+        self.assertTrue(
+            Follow.objects.filter(user=self.user, author=self.user).exists()
+        )
+
+    def test_unfollow(self):
+        """Тестирование отписки"""
+        Follow.objects.create(user=self.user, author=self.user)
+        self.assertTrue(
+            Follow.objects.filter(user=self.user, author=self.user).exists()
+        )
 
 
 class PaginatorViewsTest(TestCase):
