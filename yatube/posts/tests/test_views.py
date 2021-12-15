@@ -259,3 +259,5 @@ class PaginatorViewsTest(TestCase):
                                  (response.context['page_obj']),
                                  POST_STR_TEST
                                  )
+
+
