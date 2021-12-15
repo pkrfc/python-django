@@ -1,11 +1,10 @@
 from django import forms
 from django.contrib.auth import get_user_model
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group, Post, Follow
+from ..models import Follow, Group, Post
 from ..views import POST_STR
 
 User = get_user_model()
@@ -280,5 +279,3 @@ class CacheViewsTest(TestCase):
             len(response.context.get('page').object_list),
             len(second_response.context.get('page').object_list),
         )
-
-
