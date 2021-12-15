@@ -41,6 +41,7 @@ class StaticURLTests(TestCase):
             '/posts/1/': 'posts/post_detail.html',
             '/create/': 'posts/create_post.html',
             '/posts/1/edit/': 'posts/create_post.html',
+            '/follow/': 'posts/follow.html',
 
         }
         for url, template in templates_url_names.items():
@@ -63,23 +64,20 @@ class StaticURLTests(TestCase):
                 self.assertEqual(response.status_code, status)
 
     def test_post_create(self):
-        """Страница /create/ доступна авторизованому."""
+        """Страница /create/ и /follow/ доступна авторизованому."""
         response = self.authorized_client.get('/create/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
+
+        pages_status = {
+            '/create/': HTTPStatus.OK,
+            '/follow/': HTTPStatus.OK,
+        }
+        for page, status in pages_status.items():
+            with self.subTest(page=page, status=status):
+                response = self.authorized_client.get(page)
+                self.assertEqual(response.status_code, status)
 
     def test_post_edit(self):
         """Страница /posts/<int:post_id>/create/ доступна автору."""
         response = self.author_client.get('/posts/1/edit/')
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-
-    def test_user_follow(self):
-        response = self.authorized_client.get(
-            f'/{self.author.username}/follow/'
-        )
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-
-    def test_user_unfollow(self):
-        response = self.authorized_client.get(
-            f'/{self.author.username}/unfollow/'
-        )
         self.assertEqual(response.status_code, HTTPStatus.OK)

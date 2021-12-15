@@ -199,6 +199,9 @@ class PostPagesTests(TestCase):
 
     def test_follow(self):
         """Тестирование подписки"""
+        self.authorized_client.get(
+            reverse('posts:profile_follow', kwargs={'username': self.user.username})
+        )
         self.assertTrue(
             Follow.objects.filter(user=self.user, author=self.user).exists()
         )
@@ -256,26 +259,3 @@ class PaginatorViewsTest(TestCase):
                                  (response.context['page_obj']),
                                  POST_STR_TEST
                                  )
-
-
-class CacheViewsTest(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.user = User.objects.create_user(username='anonymous3')
-        Post.objects.create(text='Тестовый текст кеш', author=cls.user)
-
-    def setUp(self):
-        self.guest_user = Client()
-
-    def test_index_cache(self):
-        """Проверка кеширования главной страницы"""
-        response = self.client.get(reverse('index'))
-        text_cache = 'Текстовый текст кеш 2'
-        Post.objects.create(text=text_cache, author=self.user)
-        second_response = self.guest_user.get(reverse('index'))
-
-        self.assertNotEqual(
-            len(response.context.get('page').object_list),
-            len(second_response.context.get('page').object_list),
-        )
