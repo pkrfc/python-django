@@ -56,7 +56,7 @@ def profile(request, username):
         'page_obj': page_obj,
         'posts_count': posts_count,
         'following': following
-               }
+    }
     return render(request, 'posts/profile.html', context)
 
 
