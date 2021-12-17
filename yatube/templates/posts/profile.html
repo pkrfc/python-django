@@ -7,29 +7,31 @@
       <aside class="col-md-3 mb-3 mt-1">
     <ul class="list-group">
       <li class="nav-link link-dark">
-           Все посты пользователя {{ author.username }} </a>
+           Все посты пользователя:  {{ author.username }} </a>
       </li>
       <li class="nav-link link-success">
           {{ author.get_full_name }}
       </li>
-      <li class="nav-link link-light">
+      <li class="nav-link link-dark">
       <h3> Всего постов: {{ author.posts.count }} </h3>
       </li>
     </ul>
-          {% if following %}
+            {% if request.user != author %}
+                {% if following %}
     <a
       class="btn btn-lg btn-light"
       href="{% url 'posts:profile_unfollow' author.username %}" role="button"
     >
       Отписаться
     </a>
-  {% else %}
+                {% else %}
       <a
         class="btn btn-lg btn-primary"
         href="{% url 'posts:profile_follow' author.username %}" role="button"
       >
         Подписаться
       </a>
+          {% endif %}
    {% endif %}
   </aside>
     <article class="col-12 col-md-9">
