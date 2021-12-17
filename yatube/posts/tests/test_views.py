@@ -199,41 +199,6 @@ class PostPagesTests(TestCase):
         response = self.authorized_client.get(group)
         self.assertNotIn(self.post, response.context["page_obj"])
 
-    def test_follow(self):
-        """Тестирование подписки"""
-        follow_user = User.objects.create_user(username="follow_user")
-        authorized_client = Client()
-        authorized_client.force_login(follow_user)
-        authorized_client.get(
-            reverse("posts:profile_follow", args={self.user.username})
-        )
-        self.assertEqual(Follow.objects.first().author, self.user)
-
-    def test_unfollow(self):
-        """Тестирование отписки"""
-        Follow.objects.create(
-            author=self.user,
-            user=self.user_2,
-        )
-        self.authorized_client.get(
-            reverse("posts:profile_unfollow", args={self.user.username})
-        )
-        self.assertFalse(Follow.objects.filter(user=self.user).exists())
-
-    def post_follow(self):
-        post = Post.objects.create(text="Текстовый текст", author=self.user)
-        Follow.objects.create(author=self.user, user=self.user_2)
-        response = self.authorized_client.get(reverse("posts:follow_index"))
-        self.assertEqual(response.context["page_obj"][0].text, post.text)
-
-    def post_unfollow(self):
-        post = Post.objects.create(
-            text="Текстовый текст_2",
-            author=self.user_2
-        )
-        response = self.authorized_client.get(reverse("posts:follow_index"))
-        self.assertNotIn(post.text, response.context["page_obj"])
-
     def test_cache(self):
         """Тестирование кэша"""
         cache_post = Post.objects.create(
@@ -300,3 +265,46 @@ class PaginatorViewsTest(TestCase):
                 self.assertEqual(
                     len(response.context["page_obj"]), POST_STR_TEST
                 )
+
+
+class FollowTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user = User.objects.create_user(username='user')
+        cls.author = User.objects.create_user(username='author')
+
+    def setUp(self):
+        self.authorized_client = Client()
+        self.author_client = Client()
+        self.authorized_client.force_login(self.user)
+        self.author_client.force_login(self.author)
+
+    def test_follow_unfollow(self):
+        """Тестирование подписки"""
+        self.assertFalse((Follow.objects.filter(user=self.user).
+                          filter(author=self.author)).exists())
+        self.authorized_client.get(reverse('posts:profile_follow',
+                                           kwargs={'username': 'author'}))
+        self.assertTrue((Follow.objects.filter(user=self.user).
+                         filter(author=self.author)).exists())
+        """Тестирование отписки"""
+        self.authorized_client.get(
+            reverse("posts:profile_unfollow",
+                    kwargs={'username': 'author'}))
+        self.assertFalse((Follow.objects.filter(user=self.user).
+                          filter(author=self.author)).exists())
+
+    def post_follow(self):
+        post = Post.objects.create(text="Текстовый текст", author=self.user)
+        Follow.objects.create(author=self.author, user=self.user)
+        response = self.authorized_client.get(reverse("posts:follow_index"))
+        self.assertEqual(response.context["page_obj"][0].text, post.text)
+
+    def post_unfollow(self):
+        post = Post.objects.create(
+            text="Текстовый текст_2",
+            author=self.user
+        )
+        response = self.authorized_client.get(reverse("posts:follow_index"))
+        self.assertNotIn(post.text, response.context["page_obj"])
