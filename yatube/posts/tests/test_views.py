@@ -302,7 +302,7 @@ class FollowTest(TestCase):
         post = Post.objects.create(text="Текстовый текст", author=self.user)
         Follow.objects.create(author=self.author, user=self.user)
         response = self.authorized_client.get(reverse("posts:follow_index"))
-        self.assertEqual(response.context["page_obj"][0].text, post.text)
+        self.assertEqual(response.context["page_obj"][0], post)
 
     def post_unfollow(self):
         post = Post.objects.create(
