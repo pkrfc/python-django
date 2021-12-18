@@ -27,7 +27,7 @@
           {% endif %}
               </div>
                <div class="card-body">
-                   <form method="post"
+                   <form method="post" enctype="multipart/form-data"
                    {% if form.instance.id %}
                          action="{% url 'posts:post_edit'  form.instance.id  %}"
                     {% else %}

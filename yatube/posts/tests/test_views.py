@@ -280,20 +280,23 @@ class FollowTest(TestCase):
         self.authorized_client.force_login(self.user)
         self.author_client.force_login(self.author)
 
-    def test_follow_unfollow(self):
+    def test_follow(self):
         """Тестирование подписки"""
-        self.assertFalse((Follow.objects.filter(user=self.user).
-                          filter(author=self.author)).exists())
+        self.assertFalse((Follow.objects.filter(
+            user=self.user, author=self.author)).exists())
         self.authorized_client.get(reverse('posts:profile_follow',
                                            kwargs={'username': 'author'}))
-        self.assertTrue((Follow.objects.filter(user=self.user).
-                         filter(author=self.author)).exists())
+        self.assertTrue((Follow.objects.filter(
+            user=self.user, author=self.author)).exists())
+
+    def test_unfollow(self):
         """Тестирование отписки"""
+        Follow.objects.create(author=self.author, user=self.user)
         self.authorized_client.get(
             reverse("posts:profile_unfollow",
                     kwargs={'username': 'author'}))
-        self.assertFalse((Follow.objects.filter(user=self.user).
-                          filter(author=self.author)).exists())
+        self.assertFalse((Follow.objects.filter(
+            user=self.user, author=self.author)).exists())
 
     def post_follow(self):
         post = Post.objects.create(text="Текстовый текст", author=self.user)
