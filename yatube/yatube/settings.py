@@ -9,14 +9,17 @@ SECRET_KEY = 'g1*vj*htv(^-_lk*7n5+rf1ma(9t1_gc%@1#+*x%z_wkr-k@x2'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
+    'www.pkrfc.pythonanywhere.com',
+    'pkrfc.pythonanywhere.com',
+]
+INTERNAL_IPS = [
     '127.0.0.1',
-    '[::1]',
-    'testserver',
 ]
 
 
 INSTALLED_APPS = [
+    'django.contrib.staticfiles',
+    'debug_toolbar',
     'about.apps.AboutConfig',
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
@@ -26,11 +29,11 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'sorl.thumbnail',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
