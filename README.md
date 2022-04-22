@@ -7,6 +7,9 @@
 
 
 (python, django, html/ccs, git, sqlite)
+
+telegram: https://t.me/maxkorolyov
+
 ```
 1) Создавать профиль, для публикации записей.
 ```
