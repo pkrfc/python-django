@@ -9,7 +9,7 @@ SECRET_KEY = 'g1*vj*htv(^-_lk*7n5+rf1ma(9t1_gc%@1#+*x%z_wkr-k@x2'
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '51.250.96.101',
+    'hostprakt.ddns.net',
     '10.129.0.26',
 ]
 INTERNAL_IPS = [
