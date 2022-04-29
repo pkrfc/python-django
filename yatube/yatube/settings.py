@@ -6,11 +6,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'g1*vj*htv(^-_lk*7n5+rf1ma(9t1_gc%@1#+*x%z_wkr-k@x2'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    'www.pkrfc.pythonanywhere.com',
-    'pkrfc.pythonanywhere.com',
+    '51.250.96.101',
+    '10.129.0.26',
 ]
 INTERNAL_IPS = [
     '127.0.0.1',
